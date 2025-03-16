@@ -1,9 +1,9 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
 
-const n = new Array(1000000).fill(0).map((_, i) => {
+const n = new Array(10_000_000).fill(0).map((_, i) => {
   return {
     index: i,
     isTrue: i === 9000000
@@ -12,7 +12,7 @@ const n = new Array(1000000).fill(0).map((_, i) => {
 function App() {
   const [count, setCount] = useState(0)
   const [num, setNum] = useState(n)
-  const mag = n.find((i) => i.isTrue === true)
+  const mag = useMemo(() => n.find((i) => i.isTrue === true), [num])
   return (
     <>
       <div>
@@ -25,7 +25,17 @@ function App() {
       </div>
       <h1>Vite + React</h1>
       <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
+        <button onClick={() => {
+          setCount((count) => count + 1);
+          if (count == 10) {
+            setNum(new Array(10_000_000).fill(0).map((_, i) => {
+              return {
+                index: i,
+                isTrue: i === 9000000
+              }
+            }))
+          }
+        }}>
           count is {count}
         </button>
         <p>
