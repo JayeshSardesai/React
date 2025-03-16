@@ -1,0 +1,28 @@
+.head {
+  background-color: #282c34;
+  width: 1530px;
+  text-align: center;
+  height: 100px;
+  color: white;
+}
+
+.foot {
+  background-color: #282c34;
+  width: 1530px;
+  height: 100px;
+  text-align: center;
+  color: white;
+}
+
+.body {
+  height: 568px;
+}
+
+.containor {
+  display: flex;
+  width: 600px;
+  text-align: center;
+  flex-direction: column;
+  justify-content: space-between;
+  color: white;
+}
