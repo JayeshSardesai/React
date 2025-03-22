@@ -1,69 +1,46 @@
-import React, { useState } from 'react';
-import './App.css';
-
-const ToDoFunction = () => {
-  const [tasks, setTasks] = useState([]);
-  const [newTask, setNewTask] = useState('');
-
-  const addTask = () => {
-    if (newTask.trim()) {
-      setTasks([
-        ...tasks,
-        { id: Date.now(), text: newTask, completed: false },
-      ]);
-      setNewTask('');
-    }
-  };
-  const deleteTask = (taskId) => {
-    setTasks(tasks.filter(task => task.id !== taskId));
-  };
-
-  const toggleTaskCompletion = (taskId) => {
-    setTasks(tasks.map(task =>
-      task.id === taskId
-        ? { ...task, completed: !task.completed }
-        : task
-    ));
-  };
-
+import Navbar from './component/Navbar'
+import { useForm } from 'react-hook-form'
+function App() {
+  const {
+    register,
+    handleSubmit,
+    watch,
+    setError,
+    formState: { errors, isSubmitting },
+  } = useForm()
+  const delay = (d) => {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        resolve()
+      }, d * 1000)
+    })
+  }
+  const onSubmit = async (data) => {
+    // await delay(2)
+    let r = await fetch("http://localhost:3000", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data) })
+    let res = await r.text()
+    console.log(data, res)
+    // if (data.username !== "jayesh") {
+    //   setError("myform", { message: "Your form is not in good format" })
+    // }
+  }
   return (
-    <div className="todo-container">
-      <h2 className="todo-header">To-Do List</h2>
-
-      <div className="todo-input-wrapper">
-        <input
-          type="text"
-          value={newTask}
-          onChange={(e) => setNewTask(e.target.value)}
-          placeholder="Add a new task..."
-          className="todo-input"
-        />
-        <button className="add-task-button" onClick={addTask}>Add Task</button>
+    <>
+      {isSubmitting && <div>Loading...</div>}
+      <div className="containor">
+        <form action="" onSubmit={handleSubmit(onSubmit)}>
+          <input placeholder='username' {...register("username", { required: true, minLength: { value: 3, message: "Min length is 3" }, maxLength: { value: 18, message: "Max length is 8" } })} type="text" />
+          {errors.username && <div className="red">{errors.username.message}</div>}
+          <br />
+          <input placeholder='password' {...register("password", { required: true, minLength: { value: 3, message: "Min length is 3" } })} type="password" />
+          {errors.password && <div className="red">{errors.password.message}</div>}
+          <br />
+          <input type="submit" value="submit" />
+          {errors.myform && <div className="red">{errors.myform.message}</div>}
+        </form>
       </div>
+    </>
+  )
+}
 
-      <ul className="todo-list">
-        {tasks.map((task) => (
-          <li
-            key={task.id}
-            className={`todo-item ${task.completed ? 'completed' : ''}`}
-          >
-            <span
-              className="task-text"
-              onClick={() => toggleTaskCompletion(task.id)}
-            >
-              {task.text}
-            </span>
-            <button
-              className="delete-button"
-              onClick={() => deleteTask(task.id)}
-            >
-              ❌
-            </button>
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
-};
-
-export default ToDoFunction;
+export default App
